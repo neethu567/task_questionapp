@@ -5,4 +5,5 @@ urlpatterns=[
     path('questions/<int:pk>/', views.question_detail),
     path('choice/', views.choice_list),
     path('choice/<int:pk>/', views.choice_detail),
+    path('choice/votes/<int:pk>/', views.vote)
 ]

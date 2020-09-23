@@ -40,6 +40,7 @@ class Choice(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     question = models.ForeignKey(Question,on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200,blank=True,default='')
+    votes=models.IntegerField(default=0)
 
     class Meta:
         ordering = ['created']

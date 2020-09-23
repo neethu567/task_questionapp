@@ -1,10 +1,12 @@
 from rest_framework import serializers, status
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
-
+from django.shortcuts import get_object_or_404,render
+from django.urls import reverse
+from django.views import generic
 from QuestionApp.models import Question,Choice
 from QuestionApp.serializers import QuestionSerializer,ChoiceSerializer
 # from django.http import HttpResponse
@@ -78,11 +80,12 @@ def choice_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'DELETE','POST'])
 def choice_detail(request, pk):
     """
     Retrieve, update or delete a code snippet.
     """
+
     try:
         choice = Choice.objects.get(pk=pk)
     except Choice.DoesNotExist:
@@ -102,3 +105,26 @@ def choice_detail(request, pk):
     elif request.method == 'DELETE':
         choice.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+    # try:
+    #     choice = Choice.objects.get(pk=pk)
+    # except:
+    #
+    #
+    # choice
+    # choice.save()
+    # msg = {"Votes": choice.vote}
+    # return
+@api_view(['PUT'])
+def vote(request, pk):
+    try:
+        choice = Choice.objects.get(pk=pk)
+    except Choice.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        choice.votes+=1
+        choice.save()
+        msg = {"Votes" : choice.votes}
+        return Response(msg)
