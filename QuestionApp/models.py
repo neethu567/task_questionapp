@@ -1,10 +1,15 @@
 import datetime
+
+from django.contrib.auth.models import User
 from django.utils import timezone
 
 from django.db import models
 from django.db import models
 from pygments.lexers import get_all_lexers
 from pygments.styles import get_all_styles
+from pygments.lexers import get_lexer_by_name
+from pygments.formatters.html import HtmlFormatter
+from pygments import highlight
 
 LEXERS = [item for item in get_all_lexers() if item[1]]
 LANGUAGE_CHOICES = sorted([(item[1][0], item[0]) for item in LEXERS])
@@ -33,6 +38,12 @@ class Question(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     question_text= models.CharField(max_length=200, blank=True)
     subject=models.CharField(max_length=100,blank=True)
+    owner = models.ForeignKey(User, related_name='questions', on_delete=models.CASCADE,default=User.objects.get(id=1))
+    highlighted = models.TextField(default="")
+
+    def save(self, *args, **kwargs):
+        super(Question, self).save(*args, **kwargs)
+
     class Meta:
         ordering = ['created']
 
